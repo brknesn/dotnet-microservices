@@ -15,6 +15,18 @@ services:
     ports:
       - "6379:6379" # expose port 27017 from the container to the host
 
+  discountdb:
+    container_name: discountdb # name of the container
+    environment:
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin1234
+      - POSTGRES_DB=DiscountDb
+    restart: always # on failure, restart the container
+    ports:
+      - "5432:5432" # expose port 27017 from the container to the host
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # postgres data volume mount point
+
   portainer:
     container_name: portainer
     restart: always
@@ -24,6 +36,17 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
+
+  pgadmin:
+    container_name: pgadmin
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=birkan@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=admin1234
+    restart: always
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/root/.pgadmin
 
   catalogapi:
     container_name: catalogapi
@@ -44,4 +67,14 @@ services:
       - basketdb # run db before api
     ports:
       - "8001:80"
+
+
+  discountapi:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=Server=discountdb;Port=5432;Database=DiscountDb;User Id=admin;Password=admin1234;"
+    depends_on:
+      - discountdb # run db before api
+    ports:
+      - "8002:80"
 
