@@ -8,6 +8,23 @@ services:
       - "27017:27017" # expose port 27017 from the container to the host
     volumes:
       - mongo_data:/data/db # mongo data volume mount point 
+  
+  basketdb:
+    container_name: basketdb # name of the container
+    restart: always # on failure, restart the container
+    ports:
+      - "6379:6379" # expose port 27017 from the container to the host
+
+  portainer:
+    container_name: portainer
+    restart: always
+    ports:
+      - "8080:8080"
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+
   catalogapi:
     container_name: catalogapi
     environment:
@@ -17,3 +34,14 @@ services:
       - catalogdb # run db before api
     ports:
       - "8000:80" # expose port 80 from the container to the host
+
+  basketapi:
+    container_name: basketapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "CacheSettings:ConnectionString=basketdb:6379"
+    depends_on:
+      - basketdb # run db before api
+    ports:
+      - "8001:80"
+
