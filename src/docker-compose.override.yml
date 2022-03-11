@@ -1,0 +1,19 @@
+version: '3.4'
+
+services:
+  catalogdb:
+    container_name: catalogdb # name of the container
+    restart: always # on failure, restart the container
+    ports:
+      - "27017:27017" # expose port 27017 from the container to the host
+    volumes:
+      - mongo_data:/data/db # mongo data volume mount point 
+  catalogapi:
+    container_name: catalogapi
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "DatabaseSettings:ConnectionString=mongodb://catalogdb:27017"
+    depends_on:
+      - catalogdb # run db before api
+    ports:
+      - "8000:80" # expose port 80 from the container to the host
