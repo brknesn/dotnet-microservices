@@ -118,8 +118,30 @@ services:
       - discountdb # run db before api
     ports:
       - "8003:80"
-  basket.api:
+
+  ocelotapigw:
+    container_name: ocelotapigw
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+    depends_on:
+      - catalogapi
+      - basketapi
+      - discountapi
+      - orderingapi  
     ports:
-      - "80"
+      - "8010:80"
+
+  shoppingaggregator:
+    container_name: shoppingaggregator
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ApiSettings:CatalogUrl=http://catalog.api"
+      - "ApiSettings:BasketUrl=http://basket.api"
+      - "ApiSettings:OrderingUrl=http://ordering.api"
+    depends_on:
+      - catalogapi
+      - basketapi
+      - orderingapi
+    ports:
+      - "8005:80"
+

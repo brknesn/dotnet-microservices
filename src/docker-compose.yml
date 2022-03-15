@@ -58,11 +58,26 @@ services:
       context: .
       dockerfile: Services/Basket/Basket.API/Dockerfile
 
+  ocelotapigw:
+    image: ${DOCKER_REGISTRY-}ocelotapigw
+    build:
+      context: .
+      dockerfile: APIGateways/OcelotApiGw/Dockerfile
+
+  shoppingaggregator:
+    image: ${DOCKER_REGISTRY-}shoppingaggregator
+    build:
+      context: .
+      dockerfile: APIGateways/Shopping.Aggregator/Dockerfile
+
 volumes:
     mongo_data:
     portainer_data:
     postgres_data:
     pgadmin_data:
+
+
+
 
 
 
